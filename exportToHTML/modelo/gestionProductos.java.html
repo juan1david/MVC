@@ -1,0 +1,86 @@
+<html>
+<head>
+<title>gestionProductos.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #6aab73;}
+.s4 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+gestionProductos.java</font>
+</center></td></tr></table>
+<pre><span class="s0">public class </span><span class="s1">gestionProductos </span><span class="s2">{</span>
+    <span class="s0">private </span><span class="s1">Conexion cnn </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Conexion</span><span class="s2">();</span>
+    <span class="s0">private </span><span class="s1">Connection conexion </span><span class="s2">= </span><span class="s1">cnn</span><span class="s2">.</span><span class="s1">Conecta</span><span class="s2">();</span>
+    <span class="s0">private </span><span class="s1">PreparedStatement ps </span><span class="s2">= </span><span class="s0">null</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">Statement st </span><span class="s2">= </span><span class="s0">null</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">ResultSet res </span><span class="s2">= </span><span class="s0">null</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Producto</span><span class="s2">&gt; </span><span class="s1">datos </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+
+    <span class="s0">public boolean </span><span class="s1">insertarProducto</span><span class="s2">(</span><span class="s1">Producto p</span><span class="s2">) {</span>
+        <span class="s0">boolean </span><span class="s1">resultado </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+        <span class="s1">Producto pb </span><span class="s2">= </span><span class="s1">buscarReferencia</span><span class="s2">(</span><span class="s1">p</span><span class="s2">.</span><span class="s1">getReferencia</span><span class="s2">());</span>
+        <span class="s0">try </span><span class="s2">{</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">pb </span><span class="s2">== </span><span class="s0">null</span><span class="s2">) {</span>
+                <span class="s1">String sql </span><span class="s2">= </span><span class="s3">&quot;INSERT INTO productos (Referencia, Nombre, Precio, Categoria) VALUES (?, ?, ?, ?);&quot;</span><span class="s2">;</span>
+                <span class="s1">ps </span><span class="s2">= </span><span class="s1">conexion</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">sql</span><span class="s2">);</span>
+                <span class="s1">ps</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s4">1</span><span class="s2">, </span><span class="s1">p</span><span class="s2">.</span><span class="s1">getReferencia</span><span class="s2">());</span>
+                <span class="s1">ps</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s4">2</span><span class="s2">, </span><span class="s1">p</span><span class="s2">.</span><span class="s1">getNombre</span><span class="s2">());</span>
+                <span class="s1">ps</span><span class="s2">.</span><span class="s1">setFloat</span><span class="s2">(</span><span class="s4">3</span><span class="s2">, </span><span class="s1">p</span><span class="s2">.</span><span class="s1">getPrecio</span><span class="s2">());</span>
+                <span class="s1">ps</span><span class="s2">.</span><span class="s1">setInt</span><span class="s2">(</span><span class="s4">4</span><span class="s2">, </span><span class="s1">p</span><span class="s2">.</span><span class="s1">getCategoria</span><span class="s2">());</span>
+                <span class="s1">resultado </span><span class="s2">= </span><span class="s1">ps</span><span class="s2">.</span><span class="s1">executeUpdate</span><span class="s2">() &gt; </span><span class="s4">0</span><span class="s2">;</span>
+            <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s3">&quot;El producto ya está registrado&quot;</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException ex</span><span class="s2">) {</span>
+            <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s3">&quot;Error al insertar: &quot; </span><span class="s2">+ </span><span class="s1">ex</span><span class="s2">);</span>
+        <span class="s2">}</span>
+        <span class="s0">return </span><span class="s1">resultado</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">Producto buscarReferencia</span><span class="s2">(</span><span class="s1">String ref</span><span class="s2">) {</span>
+        <span class="s1">Producto p </span><span class="s2">= </span><span class="s0">null</span><span class="s2">;</span>
+        <span class="s0">try </span><span class="s2">{</span>
+            <span class="s1">String sql </span><span class="s2">= </span><span class="s3">&quot;SELECT * FROM productos WHERE Referencia = ?&quot;</span><span class="s2">;</span>
+            <span class="s1">ps </span><span class="s2">= </span><span class="s1">conexion</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">sql</span><span class="s2">);</span>
+            <span class="s1">ps</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s4">1</span><span class="s2">, </span><span class="s1">ref</span><span class="s2">);</span>
+            <span class="s1">res </span><span class="s2">= </span><span class="s1">ps</span><span class="s2">.</span><span class="s1">executeQuery</span><span class="s2">();</span>
+            <span class="s0">while </span><span class="s2">(</span><span class="s1">res</span><span class="s2">.</span><span class="s1">next</span><span class="s2">()) {</span>
+                <span class="s1">p </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Producto</span><span class="s2">(</span><span class="s1">res</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s3">&quot;Referencia&quot;</span><span class="s2">), </span><span class="s1">res</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s3">&quot;Nombre&quot;</span><span class="s2">), </span><span class="s1">res</span><span class="s2">.</span><span class="s1">getFloat</span><span class="s2">(</span><span class="s3">&quot;Precio&quot;</span><span class="s2">), </span><span class="s1">res</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s3">&quot;Categoria&quot;</span><span class="s2">));</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException ex</span><span class="s2">) {</span>
+            <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s3">&quot;Error al buscar: &quot; </span><span class="s2">+ </span><span class="s1">ex</span><span class="s2">);</span>
+        <span class="s2">}</span>
+        <span class="s0">return </span><span class="s1">p</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">buscarPorCategoria</span><span class="s2">(</span><span class="s1">Integer categoria</span><span class="s2">) {</span>
+        <span class="s0">try </span><span class="s2">{</span>
+            <span class="s1">String sql </span><span class="s2">= </span><span class="s3">&quot;SELECT * FROM productos WHERE Categoria = ?&quot;</span><span class="s2">;</span>
+            <span class="s1">ps </span><span class="s2">= </span><span class="s1">conexion</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">sql</span><span class="s2">);</span>
+            <span class="s1">ps</span><span class="s2">.</span><span class="s1">setInt</span><span class="s2">(</span><span class="s4">1</span><span class="s2">, </span><span class="s1">categoria</span><span class="s2">);</span>
+            <span class="s1">res </span><span class="s2">= </span><span class="s1">ps</span><span class="s2">.</span><span class="s1">executeQuery</span><span class="s2">();</span>
+            <span class="s0">boolean </span><span class="s1">found </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s0">while </span><span class="s2">(</span><span class="s1">res</span><span class="s2">.</span><span class="s1">next</span><span class="s2">()) {</span>
+                <span class="s1">Producto p </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Producto</span><span class="s2">(</span><span class="s1">res</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s3">&quot;Referencia&quot;</span><span class="s2">), </span><span class="s1">res</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s3">&quot;Nombre&quot;</span><span class="s2">), </span><span class="s1">res</span><span class="s2">.</span><span class="s1">getFloat</span><span class="s2">(</span><span class="s3">&quot;Precio&quot;</span><span class="s2">), </span><span class="s1">res</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s3">&quot;Categoria&quot;</span><span class="s2">));</span>
+                <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s1">p</span><span class="s2">.</span><span class="s1">toString</span><span class="s2">());</span>
+                <span class="s1">found </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+            <span class="s2">}</span>
+            <span class="s0">if </span><span class="s2">(!</span><span class="s1">found</span><span class="s2">) {</span>
+                <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s3">&quot;No se encontraron productos para la categoría especificada.&quot;</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException ex</span><span class="s2">) {</span>
+            <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s3">&quot;Error al buscar productos por categoría: &quot; </span><span class="s2">+ </span><span class="s1">ex</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>
